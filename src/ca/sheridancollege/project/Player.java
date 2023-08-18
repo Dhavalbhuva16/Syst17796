@@ -1,49 +1,87 @@
-/**
- * SYST 17796 Project Base code.
- * Students can modify and extend to implement their game.
- * Add your name as an author and the date!
- */
 package ca.sheridancollege.project;
 
-/**
- * A class that models each Player in the game. Players have an identifier, which should be unique.
- *
- * @author dancye
- * @author Paul Bonenfant Jan 2020
- */
-public abstract class Player {
- 
-    private String name; //the unique name for this player
+import ca.sheridancollege.project.Card;
+import java.util.ArrayList;
+import java.util.List;
 
-    /**
-     * A constructor that allows you to set the player's unique ID
-     *
-     * @param name the unique ID to assign to this player.
-     */
+public class Player {
+    private String name;
+    private List<Card> hand;
+
+    // Constructor to initialize the player's name and hand
     public Player(String name) {
         this.name = name;
+        hand = new ArrayList<>();
     }
 
-    /**
-     * @return the player name
-     */
+    // Add a card to the player's hand
+    public void addCard(Card card) {
+        hand.add(card);
+    }
+
+    // Remove a card from the player's hand
+    public void removeCard(Card card) {
+        hand.remove(card);
+    }
+
+    // Check if the player has a card of a specific rank
+    public boolean hasCard(String rank) {
+        for (Card card : hand) {
+            if (card.getRank().equalsIgnoreCase(rank)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Get sets of four cards of the same rank (books) from the player's hand
+    public List<String> getBooks() {
+        List<String> books = new ArrayList<>();
+        int[] rankCount = new int[13]; // There are 13 ranks (2 to Ace)
+
+        // Count the occurrences of each rank in the hand
+        for (Card card : hand) {
+            String rank = card.getRank();
+            int rankIndex = getRankIndex(rank);
+            rankCount[rankIndex]++;
+        }
+
+        // If there are 4 cards of a rank, add it as a book
+        for (int i = 0; i < rankCount.length; i++) {
+            if (rankCount[i] == 4) {
+                books.add(getRankByIndex(i));
+            }
+        }
+        return books;
+    }
+
+    // Get the index of a rank in the ranks array
+    private int getRankIndex(String rank) {
+        String[] ranks = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"};
+        for (int i = 0; i < ranks.length; i++) {
+            if (ranks[i].equalsIgnoreCase(rank)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    // Get the rank using an index
+    private String getRankByIndex(int index) {
+        String[] ranks = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"};
+        if (index >= 0 && index < ranks.length) {
+            return ranks[index];
+        }
+        return null;
+    }
+
+    // Get the player's name
     public String getName() {
         return name;
     }
 
-    /**
-     * Ensure that the playerID is unique
-     *
-     * @param name the player name to set
-     */
-    public void setName(String name) {
-        this.name = name;
+    // Get the player's hand of cards
+    public List<Card> getHand() {
+        return hand;
     }
-
-    /**
-     * The method to be overridden when you subclass the Player class with your specific type of Player and filled in
-     * with logic to play your game.
-     */
-    public abstract void play();
-
 }
